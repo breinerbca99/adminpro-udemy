@@ -30,7 +30,7 @@ import { RegisterComponent } from './login/register/register.component';
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent,
+    RegisterComponent
     /* DashboardComponent,
     ProgressComponent,
     Graficas1Component,
