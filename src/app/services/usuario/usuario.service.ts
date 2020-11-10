@@ -50,6 +50,18 @@ export class UsuarioService {
     }
   }
 
+  listarUsuarios(desde: number = 0): any {
+    const url = `${URL_SERVICIOS}/usuario?desde=${desde}`;
+    return this.http.get(url) as Observable<Usuario[]>;
+  }
+
+  buscarUsuarios(termino: string): Observable<Usuario[]> {
+    const url = `${URL_SERVICIOS}/busqueda/coleccion/usuarios/${termino}`;
+    return this.http
+      .get(url)
+      .pipe(map((resp: any) => resp.usuarios)) as Observable<Usuario[]>;
+  }
+
   crearUsuario(usuario: Usuario): Observable<Usuario> {
     const url = `${URL_SERVICIOS}/usuario`;
     return this.http.post(url, usuario).pipe(
@@ -66,12 +78,30 @@ export class UsuarioService {
     console.log(url);
     return this.http.put(url, usuario).pipe(
       map((resp: any) => {
-        const usuariodb: Usuario = resp.usuario;
-        this.guardarStorage(usuariodb._id, this.token, usuariodb);
+        if (usuario._id === this.usuario._id) {
+          const usuariodb: Usuario = resp.usuario;
+          this.guardarStorage(usuariodb._id, this.token, usuariodb);
+        }
         Swal.fire('Usuario actualizado', usuario.nombre, 'success');
         return resp.usuario;
       })
     ) as Observable<Usuario>;
+  }
+
+  borrarUsuario(id: string): any {
+    const url = `${URL_SERVICIOS}/usuario/${id}?token=${this.token}`;
+    console.log(url);
+
+    return this.http.delete(url).pipe(
+      map((resp) => {
+        Swal.fire(
+          'Usuario borrado',
+          'El usuario a sido eliminado correctamente',
+          'success'
+        );
+        return true;
+      })
+    );
   }
 
   login(usuario: Usuario, recordar: boolean = false): any {
